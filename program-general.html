@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>البرنامج العام - بطولة الروبوت 2026</title>
+<style>
+  @page { size: A4 portrait; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root{
+    --navy:#12315a;
+    --navy-2:#1b4a86;
+    --green:#1f7a44;
+    --orange:#ef8022;
+    --gold:#b8912f;
+    --gold-soft:#d8b559;
+    --ink:#1c2430;
+    --paper:#fbfaf5;
+    --line:#e3dcc7;
+  }
+
+  html,body{ font-family:"Segoe UI","Tahoma",Arial,sans-serif; color:var(--ink); background:#ffffff; }
+
+  .page{
+    width:210mm; height:297mm;
+    padding:9mm 14mm 11mm;
+    background:var(--paper);
+    position:relative;
+    display:flex; flex-direction:column;
+  }
+  .page::before{ content:""; position:absolute; inset:6mm; border:1.5px solid var(--gold); border-radius:6px; pointer-events:none; }
+  .page::after{ content:""; position:absolute; inset:7.2mm; border:0.6px solid var(--gold-soft); border-radius:5px; pointer-events:none; }
+
+  .inner{ position:relative; z-index:2; display:flex; flex-direction:column; height:100%; }
+
+  /* ---------- brand / header ---------- */
+  .brand{ text-align:center; margin-top:1mm; }
+  .brand img{ height:140px; width:auto; }
+
+  .titleband{ text-align:center; margin-top:2.5mm; }
+  .kicker{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:11px; letter-spacing:4px; color:var(--gold); font-weight:700;
+  }
+  .kicker::before,.kicker::after{ content:""; width:34px; height:1px; background:var(--gold-soft); display:inline-block; }
+  h1{ font-size:33px; color:var(--navy); font-weight:900; letter-spacing:.5px; line-height:1.1; margin-top:5px; }
+  h1 .yr{ color:var(--orange); }
+  .meta{ margin-top:8px; font-size:14px; color:#42505f; font-weight:700; }
+  .meta .pill{
+    display:inline-block; background:var(--navy); color:#fff; border-radius:20px;
+    padding:3px 14px; font-size:12.5px; margin:0 4px; font-weight:700;
+  }
+  .meta .date{ color:var(--navy); }
+  .divider{ display:flex; align-items:center; justify-content:center; gap:9px; margin:9px auto 0; max-width:55%; }
+  .divider .l{ height:1px; background:linear-gradient(90deg,transparent,var(--gold)); flex:1; }
+  .divider .d{ width:7px; height:7px; background:var(--gold); transform:rotate(45deg); }
+
+  /* ---------- table ---------- */
+  .tablewrap{ margin-top:5mm; padding:0 1mm; }
+  table{ width:100%; border-collapse:collapse; font-size:14px; }
+  thead th{ background:var(--navy); color:#fff; font-weight:800; padding:12px 10px; font-size:14.5px; border:1px solid var(--navy); }
+  thead th:first-child{ border-top-right-radius:8px; }
+  thead th:last-child{ border-top-left-radius:8px; }
+  thead th.thtime{ width:19%; }
+
+  tbody td{ padding:15px 12px; border:1px solid var(--line); text-align:center; background:#fff; }
+  tbody tr:nth-child(even) td{ background:#f6f3e8; }
+  td.act{ text-align:right; font-weight:700; color:var(--navy); font-size:14.5px; }
+  td.time{ font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; letter-spacing:.5px; }
+
+  tr.round td.act{ color:var(--navy-2); }
+  tr.rest td{ background:#efeadb !important; color:#6a6350; font-style:italic; }
+  tr.finale td{ background:var(--navy) !important; color:#fff; }
+  tr.finale td.act{ color:#fff; }
+  tr.finale td.time{ color:var(--gold-soft); }
+
+  .idx{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; border-radius:50%;
+    background:var(--gold); color:#fff; font-size:12px; font-weight:800; margin-left:10px; vertical-align:middle;
+  }
+  tr.rest .idx, tr.finale .idx{ background:#fff; color:var(--navy); }
+
+  /* ---------- committees ---------- */
+  .stations{ margin-top:6mm; padding:0 1mm; }
+  .stations .lead{
+    text-align:center; font-size:13px; color:#42505f; font-weight:700; margin-bottom:9px;
+    display:flex; align-items:center; gap:10px; justify-content:center;
+  }
+  .stations .lead::before,.stations .lead::after{ content:""; height:1px; width:40px; background:var(--line); }
+  .chips{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
+  .chip{ border:1px solid var(--gold-soft); background:#fff; border-radius:9px; padding:11px 6px; text-align:center; position:relative; }
+  .chip::before{ content:""; position:absolute; top:0; right:12px; left:12px; height:3px; border-radius:0 0 3px 3px; }
+  .chip.c1::before{ background:var(--navy); } .chip.c2::before{ background:var(--green); }
+  .chip.c3::before{ background:var(--orange); } .chip.c4::before{ background:var(--gold); }
+  .chip .n{ font-size:11px; color:var(--gold); font-weight:800; }
+  .chip .t{ font-size:12.5px; color:var(--navy); font-weight:800; margin-top:4px; line-height:1.4; }
+
+  /* ---------- wish ---------- */
+  .wish{ margin-top:7mm; text-align:center; }
+  .wish span{
+    display:inline-block; color:var(--green); font-weight:800; font-size:15px;
+    padding:8px 26px; border:1px dashed var(--gold-soft); border-radius:24px; background:#fff;
+  }
+
+  /* ---------- footer ---------- */
+  .foot{ margin-top:auto; padding-top:5mm; text-align:center; font-size:11px; color:#8a8676; }
+  .foot .rule{ height:1px; background:var(--line); margin:0 auto 7px; max-width:70%; }
+</style>
+</head>
+<body>
+  <div class="page">
+   <div class="inner">
+
+    <div class="brand"><img src="__LOGO__" alt="ثانوية الشيخ بدر الدين الحسني الشرعية للبنين"></div>
+
+    <div class="titleband">
+      <span class="kicker">ROBOT&nbsp;&nbsp;CHAMPIONSHIP</span>
+      <h1>بطولة الروبوت <span class="yr">2026</span></h1>
+      <div class="meta">
+        <span class="pill">البرنامج العام</span>
+        <span class="date">السبت 25 / 7 / 2026</span>
+      </div>
+      <div class="divider"><span class="l"></span><span class="d"></span><span class="l"></span></div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>البرنامج</th>
+            <th class="thtime">من</th>
+            <th class="thtime">إلى</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="act"><span class="idx">1</span>حضور الطلاب والتجهيز لبدء البطولة</td>
+            <td class="time">8:00</td><td class="time">9:30</td>
+          </tr>
+          <tr class="round">
+            <td class="act"><span class="idx">2</span>الجولة صفر</td>
+            <td class="time">9:30</td><td class="time">10:30</td>
+          </tr>
+          <tr class="round">
+            <td class="act"><span class="idx">3</span>الجولة الأولى</td>
+            <td class="time">10:30</td><td class="time">11:30</td>
+          </tr>
+          <tr class="rest">
+            <td class="act"><span class="idx">4</span>استراحة</td>
+            <td class="time">11:30</td><td class="time">12:00</td>
+          </tr>
+          <tr class="round">
+            <td class="act"><span class="idx">5</span>الجولة الثانية</td>
+            <td class="time">12:00</td><td class="time">1:00</td>
+          </tr>
+          <tr class="rest">
+            <td class="act"><span class="idx">6</span>استراحة غداء واحتساب النتائج</td>
+            <td class="time">1:00</td><td class="time">1:45</td>
+          </tr>
+          <tr class="finale">
+            <td class="act"><span class="idx">7</span>ختام البطولة والتكريم</td>
+            <td class="time">1:45</td><td class="time">2:45</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="stations">
+      <div class="lead">يمرّ كل فريق خلال البطولة على أقسام التقييم الأربعة</div>
+      <div class="chips">
+        <div class="chip c1"><div class="n">القسم الأول</div><div class="t">تحدّي الحلبة<br>(الجولات)</div></div>
+        <div class="chip c2"><div class="n">القسم الثاني</div><div class="t">لجنة<br>العمل الجماعي</div></div>
+        <div class="chip c3"><div class="n">القسم الثالث</div><div class="t">لجنة<br>التصميم والبرمجة</div></div>
+        <div class="chip c4"><div class="n">القسم الرابع</div><div class="t">لجنة<br>البحث العلمي</div></div>
+      </div>
+    </div>
+
+    <div class="wish"><span>بالتوفيق لجميع الفرق المشاركة 🤖</span></div>
+
+    <div class="foot">
+      <div class="rule"></div>
+      ثانوية المحدّث الأكبر الشيخ بدر الدين الحسني الشرعية للبنين — بطولة الروبوت 2026
+    </div>
+
+   </div>
+  </div>
+</body>
+</html>
