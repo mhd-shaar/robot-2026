@@ -1,0 +1,41 @@
+name: تحديث قوائم المتابعة تلقائيًّا
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'      # كل ربع ساعة (قد يتأخّر GitHub قليلًا وقت الذروة)
+  workflow_dispatch:            # زر تشغيل يدوي فوري من تبويب Actions
+
+permissions:
+  contents: write
+
+concurrency:                    # يمنع تشغيلين متزامنين يتعارضان على الدفع
+  group: sync-followup
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install --quiet openpyxl
+
+      - name: سحب البيانات وتحديث الصفحة
+        run: python ci_build.py
+
+      - name: حفظ التغيير إن وُجد
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "تحديث تلقائي لقوائم المتابعة من المحرّر المستضاف"
+            git push
+            echo "نُشر التحديث"
+          else
+            echo "لا تغيير"
+          fi
