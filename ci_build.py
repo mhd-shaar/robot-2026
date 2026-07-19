@@ -150,6 +150,10 @@ td{border:1px solid #d9d3c2;padding:5px 9px;font-size:12.5px;vertical-align:midd
 .day>b{display:block;font-size:15.5px;color:var(--navy);margin:8px 0 6px}
 .day p{font-size:12.5px;color:#5a6472;line-height:1.65}
 .day p b{color:var(--navy);font-weight:800}
+.livebar{display:flex;align-items:center;gap:9px;margin:10px 0 0;font-size:12px;font-weight:700}
+.dotl{width:9px;height:9px;border-radius:50%;background:#c9c3ae;flex:0 0 auto}
+.dotl.ok{background:#0e7d74} .dotl.err{background:#c0392b}
+.livebar .t{color:#7a7663}
 """
 
 def nav(active):
@@ -169,12 +173,68 @@ for i, ws in enumerate(wb.worksheets):
     panes += f'<div class="pane{a}"><div class="scroll">{table(ws)}</div></div>'
 
 body = (f'<h1>قوائم المتابعة</h1>'
-        f'<div class="muted">عرض فقط — المصدر ملف الإكسل لدى إدارة البطولة.</div>'
-        f'<div class="tabs">{tabs}</div>{panes}'
+        f'<div class="muted">عرض فقط — التعديل من محرّر إدارة البطولة.</div>'
+        f'<div class="livebar"><span class="dotl" id="livedot"></span>'
+        f'<span class="t" id="livetxt">جارٍ جلب أحدث البيانات…</span></div>'
+        f'<div class="tabs" id="tabs">{tabs}</div><div id="panes">{panes}</div>'
         '<script>function show(i,el){'
         'document.querySelectorAll(".pane").forEach(function(p,j){p.classList.toggle("active",j===i)});'
         'document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});'
-        'el.classList.add("active");}</script>')
+        'el.classList.add("active");}</script>'
+        """
+<script>
+(function(){
+ var EDITOR="https://shaar.pythonanywhere.com";
+ var bar=document.getElementById('livebar'), dot=document.getElementById('livedot'),
+     txt=document.getElementById('livetxt');
+ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+ function render(sheets){
+  var tabs=document.getElementById('tabs'), panes=document.getElementById('panes');
+  tabs.innerHTML=''; panes.innerHTML='';
+  sheets.forEach(function(s,i){
+   var b=document.createElement('button');
+   b.className='tab'+(i===0?' active':''); b.textContent=s.name;
+   b.onclick=function(){show(i,b);}; tabs.appendChild(b);
+   var h='<table><thead><tr>'+s.headers.map(function(x){return '<th>'+esc(x)+'</th>';}).join('')+
+         '</tr></thead><tbody>';
+   var prev=null;
+   s.rows.forEach(function(r){
+    h+='<tr>';
+    s.headers.forEach(function(_,ci){
+     var v=r.cells[ci]||'';
+     // عمود التصنيف: نُخفي التكرار المتتالي كما في الإكسل المدموج
+     if(ci===0 && s.grouped && v===prev) v='';
+     h+='<td'+(ci===0?' class="cat"':'')+'>'+esc(v)+'</td>';
+    });
+    if(s.grouped) prev=r.cells[0]||'';
+    h+='</tr>';
+   });
+   var d=document.createElement('div');
+   d.className='pane'+(i===0?' active':'');
+   d.innerHTML='<div class="scroll">'+h+'</tbody></table></div>';
+   panes.appendChild(d);
+  });
+ }
+ function stamp(){
+  var d=new Date();
+  return d.toLocaleString('ar-SY',{dateStyle:'short',timeStyle:'short'});
+ }
+ fetch(EDITOR+'/api/data',{cache:'no-store'})
+  .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(function(d){
+    if(!d.sheets||!d.sheets.length) throw new Error('فارغ');
+    render(d.sheets);
+    dot.className='dotl ok';
+    txt.textContent='بيانات حيّة — محدَّثة الآن ('+stamp()+')';
+  })
+  .catch(function(e){
+    dot.className='dotl err';
+    txt.textContent='تعذّر الوصول للمحرّر — تُعرض آخر نسخة محفوظة';
+  });
+})();
+</script>
+""")
 
 html = f"""<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
