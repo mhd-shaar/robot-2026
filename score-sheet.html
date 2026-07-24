@@ -1,0 +1,399 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>استمارة التحكيم - بطولة الروبوت 2026</title><link rel="icon" href="logo.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0e2a52;--navy2:#1b4a86;--gold:#c9a227;--gold2:#e8c766;--goldSoft:#f4e6bc;
+  --line:#e2e8f2;--ink:#1c2c45;--muted:#75839e;--faint:#b9c3d6;--card:#ffffff;
+  --ok:#1e8a4c;--warn:#c0392b;
+  --mono:Consolas,"Cascadia Mono","Courier New",monospace;
+}
+body{font-family:"Segoe UI","Tahoma",Arial,sans-serif;color:var(--ink);background:#f5f7fa}
+
+.nav{background:#fff;border-bottom:1px solid var(--line);padding:11px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.nav img{height:34px}
+.nav a{color:#3d557e;text-decoration:none;font-size:13.5px;font-weight:700;padding:7px 13px;border-radius:7px}
+.nav a:hover{background:#eef4fd;color:var(--navy)}
+.nav a.on{background:var(--navy);color:#fff}
+.nav .sp{flex:1}
+
+.wrap{max-width:680px;margin:0 auto;padding:20px 16px 150px}
+
+.hero{text-align:center;padding:22px 0 4px}
+.hero .k{font-family:var(--mono);font-size:11px;letter-spacing:5px;color:var(--gold);font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:9px}
+.hero .k img{width:20px;height:20px}
+.hero h1{font-size:28px;font-weight:900;color:var(--navy);margin:5px 0 3px}
+.hero .d{font-size:13px;color:var(--muted);font-weight:600}
+
+/* ---- team / round control panel ---- */
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:20px;
+  box-shadow:0 2px 10px rgba(20,40,80,.06);display:grid;gap:14px;
+  grid-template-columns:1.4fr 1fr;align-items:end}
+.field label{display:block;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.5px;margin-bottom:6px}
+.field .sub{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+select,.tin{width:100%;font:700 15px "Segoe UI",Tahoma,sans-serif;color:var(--navy);
+  border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;background:#f8fafd;outline:none}
+select:focus,.tin:focus{border-color:var(--gold);background:#fff}
+.rbtns{display:flex;gap:6px;flex-wrap:wrap}
+.rbtn{font:800 13px "Segoe UI",Tahoma,sans-serif;padding:9px 14px;border:1.5px solid var(--line);
+  background:#f8fafd;color:#5a6c8c;border-radius:10px;cursor:pointer;transition:.15s}
+.rbtn:hover{border-color:var(--gold)}
+.rbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.rbtn.prac.on{background:#6b7b96;border-color:#6b7b96}
+
+/* ---- missions — one per row ---- */
+.missions{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+@media(max-width:760px){.panel{grid-template-columns:1fr}}
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 15px;
+  box-shadow:0 1px 5px rgba(20,40,80,.05);display:flex;flex-direction:column}
+.mcard.pen{border-color:#f0c9c4;background:#fdf6f5;grid-column:1/-1}
+.mhead{display:flex;align-items:flex-start;gap:11px}
+.mnum{flex:0 0 auto;width:30px;height:30px;border-radius:9px;background:var(--navy);color:#fff;
+  font-family:var(--mono);font-weight:800;font-size:15px;display:grid;place-items:center}
+.mcard.pen .mnum{background:var(--warn)}
+.mtitle{flex:1;min-width:0;font-size:16px;font-weight:800;color:var(--navy);line-height:1.3}
+.mreq{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:3px;line-height:1.5}
+.mscore{flex:0 0 auto;text-align:center;display:flex;align-items:baseline;gap:3px}
+.chip{font-family:var(--mono);font-size:22px;font-weight:900;color:var(--gold);min-width:26px}
+.cmax{font-family:var(--mono);font-size:11px;color:var(--faint);font-weight:700}
+.mrule{font-family:var(--mono);font-size:10.5px;color:#8ea0bd;margin:9px 0 11px;letter-spacing:.3px;
+  background:#f5f8fc;border-radius:7px;padding:5px 9px}
+.mctrl{margin-top:auto;display:flex;flex-direction:column;gap:8px}
+
+/* pills (choice / checks / dispensers) */
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font:700 13px "Segoe UI",Tahoma,sans-serif;padding:8px 13px;border:1.5px solid var(--line);
+  background:#f8fafd;color:#5a6c8c;border-radius:9px;cursor:pointer;transition:.13s;display:inline-flex;align-items:center;gap:5px}
+.pill b{color:var(--gold);font-family:var(--mono)}
+.pill.sm{padding:6px 11px;font-size:12px}
+.pill:hover{border-color:var(--gold)}
+.pill.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pill.on b{color:var(--gold2)}
+.disprow{display:flex;align-items:center;gap:10px}
+.displab{font-size:12px;font-weight:800;color:var(--muted);min-width:62px}
+
+/* stepper */
+.stepwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.step{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:11px;overflow:hidden;background:#f8fafd}
+.sbtn{width:38px;height:40px;border:none;background:transparent;color:var(--navy);font-size:22px;font-weight:700;
+  cursor:pointer;transition:.13s;line-height:1}
+.sbtn:hover{background:var(--goldSoft)}
+.sinp{width:58px;height:40px;border:none;border-inline:1.5px solid var(--line);text-align:center;background:#fff;
+  font:900 19px var(--mono);color:var(--navy);outline:none;-moz-appearance:textfield}
+.sinp::-webkit-outer-spin-button,.sinp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.steplab{font-size:12.5px;font-weight:700;color:var(--muted)}
+.note{font-family:var(--mono);font-size:11px;color:var(--ok);font-weight:700}
+
+/* ---- sticky total dock ---- */
+.dock{position:fixed;bottom:0;inset-inline:0;z-index:40;background:rgba(14,42,82,.97);color:#fff;
+  border-top:2px solid var(--gold);box-shadow:0 -6px 22px rgba(0,0,0,.18);backdrop-filter:blur(4px)}
+.dock .inner{max-width:1080px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.dock .lbl{font-size:12px;color:#a9bcd8;font-weight:700}
+.dock .who{font-weight:800;font-size:14px}
+.dock .who b{color:var(--gold2)}
+.dock .big{font-family:var(--mono);font-weight:900;font-size:34px;color:var(--gold2);line-height:1}
+.dock .of{font-family:var(--mono);font-size:13px;color:#8ea6c9;font-weight:700}
+.dock .sp{flex:1}
+.dbtn{font:800 14px "Segoe UI",Tahoma,sans-serif;padding:11px 20px;border-radius:11px;border:none;cursor:pointer;transition:.14s}
+.dbtn.save{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#2c2408}
+.dbtn.save:hover{filter:brightness(1.07)}
+.dbtn.save:disabled{background:#3c567f;color:#8ea6c9;cursor:not-allowed;filter:none}
+.dbtn.ghost{background:transparent;color:#cdd9ec;border:1.5px solid rgba(255,255,255,.25)}
+.dbtn.ghost:hover{border-color:var(--gold2);color:#fff}
+
+#toast{position:fixed;bottom:82px;inset-inline:0;text-align:center;z-index:60;pointer-events:none;opacity:0;transition:opacity .4s}
+#toast span{background:var(--ok);color:#fff;font-size:13px;font-weight:800;padding:10px 20px;border-radius:22px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+#toast.warn span{background:var(--warn)}
+#toast.on{opacity:1}
+
+/* ---- mobile ---- */
+@media(max-width:620px){
+  .wrap{padding-bottom:196px}
+  .hero h1{font-size:22px}
+  .mtitle{font-size:15px}
+  .chip{font-size:20px}
+  .sbtn{width:44px}       /* bigger touch targets */
+  .sinp{width:52px}
+  .dock .inner{padding:10px 12px;gap:8px 12px;row-gap:8px}
+  .dock .sp{display:none}
+  .dock .big{font-size:26px}
+  .dock .who{font-size:12.5px}
+  .dbtn{flex:1 1 44%;padding:12px 10px;font-size:13px}
+  .dbtn.save{flex:1 1 100%;order:5}
+  .dbtn.ghost{flex:1 1 100%;order:6}
+}
+@media print{
+  .nav,.dock,#toast,.rbtns .rbtn:not(.on),.hero .k,.hero .d{display:none!important}
+  .sbtn{display:none} .mctrl .pill:not(.on){opacity:.3}
+  body{background:#fff}.wrap{padding-bottom:20px}
+}
+</style></head><body>
+
+<div id="toast"><span></span></div>
+
+<div class="nav"><img src="logo.png" alt="">
+  <a href="index.html">الرئيسية</a>
+  <a href="results.html">لوحة النتائج</a>
+  <a href="score-sheet.html" class="on">استمارة التحكيم</a>
+  <span class="sp"></span>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="k"><img src="assets/robot.svg" alt="">ROBOT GAME · SCORE SHEET</div>
+    <h1>استمارة تحكيم لعبة الروبوت</h1>
+    <div class="d">مصنع الغذاء (Food Factory) — أدخل إنجاز كل بند وتُحسب النقاط تلقائياً</div>
+  </div>
+
+  <!-- control panel -->
+  <div class="panel">
+    <div class="field">
+      <label>الفريق</label>
+      <select id="teamSel"></select>
+    </div>
+    <div class="field">
+      <label>الجولة</label>
+      <div class="rbtns" id="roundBtns">
+        <button class="rbtn prac" data-r="0">تجريبية</button>
+        <button class="rbtn on" data-r="1">الجولة 1</button>
+        <button class="rbtn" data-r="2">الجولة 2</button>
+        <button class="rbtn" data-r="3">الجولة 3</button>
+      </div>
+    </div>
+    <div class="field sub">
+      <div><label>رقم الطاولة</label><input class="tin" id="tableIn" placeholder="—"></div>
+      <div><label>اسم الحكم</label><input class="tin" id="judgeIn" placeholder="اسم حكم الطاولة"></div>
+    </div>
+  </div>
+
+  <div class="missions" id="missions"></div>
+</div>
+
+<!-- sticky total dock -->
+<div class="dock"><div class="inner">
+  <div>
+    <div class="lbl">المجموع الكلي للجولة</div>
+    <div class="who">الفريق: <b id="dockTeam">—</b> · <span id="dockRound">الجولة 1</span></div>
+  </div>
+  <div style="display:flex;align-items:baseline;gap:6px">
+    <span class="big" id="dockTotal">0</span><span class="of">/ <span id="dockMax">0</span></span>
+  </div>
+  <div class="sp"></div>
+  <button class="dbtn ghost" id="resetSheet">تفريغ الاستمارة</button>
+  <button class="dbtn save" id="saveBoard">💾 اعتماد النتيجة وحفظها</button>
+</div></div>
+
+<script>
+// ===== teams (shared with results.html) =====
+const TEAMS = [
+  {id:"falcons", name:"Falcons"},
+  {id:"omega",   name:"Omega Bots"},
+  {id:"future",  name:"Future Engineers"},
+  {id:"lrd",     name:"LRD"},
+  {id:"nova",    name:"Nova Tech"},
+  {id:"free",    name:"Free Bots"},
+];
+const RESULTS_KEY="rc2026_results_v1";
+const SHEETS_KEY ="rc2026_sheets_v1";
+
+// ===== missions — faithful to the official Food Factory score sheet =====
+const MISSIONS=[
+ {id:"m1",num:1,title:"منع تسرّب التلوث للماء",req:"دفع الكرة (الصفراء/الزرقاء) لتلمس الأرضية",rule:"4 نقاط لكل كرة تلمس الأرض",max:8,type:"step",per:4,cmax:2,unit:"كرات لمست الأرض"},
+ {id:"m2",num:2,title:"حصاد الذرة",req:"جلب الذرة للقاعدة أو لمسها لأرض الملعب",rule:"5 (لمس الأرض) · 9 (في القاعدة)",max:9,type:"choice",opts:[{l:"لمس أرض الملعب",p:5},{l:"في القاعدة",p:9}]},
+ {id:"m3",num:3,title:"صيد الأسماك",req:"جلب الأسماك الكبيرة للقاعدة أو للبرّاد (الميناء)",rule:"3 لكل سمكة في القاعدة · 6 لكل سمكة في البرّاد",max:18,type:"dual",a:{l:"سمكة كبيرة في القاعدة (×3)",per:3,cmax:6},b:{l:"سمكة في البرّاد/الميناء (×6)",per:6,cmax:3}},
+ {id:"m4",num:4,title:"البيتزا والمثلجات",req:"جلب البيتزا و/أو المثلجات إلى القاعدة",rule:"7 نقاط لكل منهما",max:14,type:"checks",opts:[{l:"البيتزا في القاعدة",p:7},{l:"المثلجات في القاعدة",p:7}]},
+ {id:"m5",num:5,title:"منتجات المزرعة (الشاحنة)",req:"جلب الشاحنة الصفراء بالكامل إلى القاعدة",rule:"9 نقاط للشاحنة",max:9,type:"checks",opts:[{l:"الشاحنة بالكامل في القاعدة",p:9}]},
+ {id:"m6",num:6,title:"السفر البعيد",req:"ملامسة الروبوت للجدار الشرقي للملعب",rule:"9 نقاط عند الملامسة",max:9,type:"checks",opts:[{l:"ملامسة الجدار الشرقي",p:9}]},
+ {id:"m7",num:7,title:"وقت الطهي",req:"استقرار المؤشر الأبيض داخل المنطقة الحمراء",rule:"14 نقطة للمؤشر الأحمر",max:14,type:"checks",opts:[{l:"المؤشر داخل المنطقة الحمراء",p:14}]},
+ {id:"m8",num:8,title:"درجة حرارة التخزين",req:"ضبط ميزان الحرارة لتصبح الحرارة منخفضة",rule:"20 نقطة للضبط المنخفض",max:20,type:"checks",opts:[{l:"الضبط المنخفض للحرارة",p:20}]},
+ {id:"m9",num:9,title:"إزالة القوارض",req:"تواجد الفئران داخل القاعدة عند نهاية الجولة",rule:"15 نقطة لكل فأرة",max:30,type:"step",per:15,cmax:2,unit:"فئران في القاعدة"},
+ {id:"m10",num:10,title:"مقطورة التخزين",req:"كاملة: في الميناء وبها لحم وبلا بكتيريا · جزئية: القاعدة فقط",rule:"20 (كاملة) · 12 (جزئية)",max:20,type:"choice",opts:[{l:"جزئية (القاعدة فقط)",p:12},{l:"كاملة",p:20}]},
+ {id:"m11",num:11,title:"البقالة وطاولة العشاء",req:"كل وحدة طعام على الطاولة عند نهاية الجولة",rule:"نقطتان لكل وحدة (حتى 12)",max:24,type:"step",per:2,cmax:12,unit:"وحدات طعام على الطاولة"},
+ {id:"m12",num:12,title:"التطهير (الموزّعات ×4)",req:"لكل موزّع فارغ: بكتيريته على الأرض (7) أو في القاعدة (12)",rule:"7 أو 12 لكل موزّع",max:48,type:"disp",n:4,opts:[{l:"—",p:0},{l:"على الأرض",p:7},{l:"في القاعدة",p:12}]},
+ {id:"m13",num:13,title:"غسل اليدين من الجراثيم",req:"كل بكتيريا مطابقة في المغسلة (بالقاعدة، دون تلامس)",rule:"3 نقاط لكل بكتيريا",max:144,type:"step",per:3,cmax:48,unit:"بكتيريا مطابقة"},
+ {id:"m14",num:14,title:"القضاء على الفيروسات",req:"تجميع الفيروسات بالمغسلة",rule:"6 (من 1–8) · 13 (9 فأكثر)",max:13,type:"choice",opts:[{l:"من 1 إلى 8 فيروسات",p:6},{l:"9 فيروسات فأكثر",p:13}]},
+ {id:"m15",num:15,title:"البكتيريا النافعة",req:"كل بكتيريا نافعة متبقية في القاعدة — يُخصم واحدة لكل لمسة روبوت بالخارج",rule:"6 نقاط لكل بكتيريا نافعة",max:72,type:"benef",per:6,cmax:12,unit:"بكتيريا نافعة في القاعدة"},
+];
+const MAXTOTAL=MISSIONS.reduce((a,m)=>a+m.max,0);
+const byId=Object.fromEntries(MISSIONS.map(m=>[m.id,m]));
+const teamName=id=>(TEAMS.find(t=>t.id===id)||{}).name||id;
+const clampN=(v,mx)=>Math.max(0,Math.min(v|0,mx));
+
+// ===== state =====
+let sheets=loadSheets();
+let st;   // current sheet
+function loadSheets(){try{return JSON.parse(localStorage.getItem(SHEETS_KEY))||{}}catch(e){return {}}}
+function persist(){sheets[st.team+"|"+st.round]=st;try{localStorage.setItem(SHEETS_KEY,JSON.stringify(sheets))}catch(e){}}
+function fresh(team,round){
+  const m={};
+  MISSIONS.forEach(mm=>{
+    if(mm.type==="step"||mm.type==="benef")m[mm.id]={n:0};
+    else if(mm.type==="choice")m[mm.id]={i:-1};
+    else if(mm.type==="checks")m[mm.id]={c:mm.opts.map(()=>false)};
+    else if(mm.type==="dual")m[mm.id]={a:0,b:0};
+    else if(mm.type==="disp")m[mm.id]={d:Array(mm.n).fill(0)};
+  });
+  return {team,round,table:"",judge:"",touches:0,m};
+}
+function stepMax(m,part){return m.type==="dual"?(part==="a"?m.a.cmax:m.b.cmax):m.cmax;}
+
+function mpts(m){
+  const s=st.m[m.id];
+  switch(m.type){
+    case"step":return clampN(s.n*m.per,m.max);
+    case"benef":return clampN(Math.max(0,s.n-st.touches)*m.per,m.max);
+    case"choice":return s.i<0?0:clampN(m.opts[s.i].p,m.max);
+    case"checks":return clampN(m.opts.reduce((a,o,i)=>a+(s.c[i]?o.p:0),0),m.max);
+    case"dual":return clampN(s.a*m.a.per+s.b*m.b.per,m.max);
+    case"disp":return clampN(s.d.reduce((a,i)=>a+m.opts[i].p,0),m.max);
+  }
+  return 0;
+}
+
+// ===== build DOM once =====
+const cont=document.getElementById("missions");
+const cardEl={};
+function stepHTML(id,part,cmax,label){
+  return `<div class="stepwrap"><div class="step">
+    <button class="sbtn" data-m="${id}" data-part="${part}" data-d="-1" aria-label="نقص">−</button>
+    <input class="sinp" type="number" inputmode="numeric" min="0" max="${cmax}" value="0" data-m="${id}" data-part="${part}">
+    <button class="sbtn" data-m="${id}" data-part="${part}" data-d="1" aria-label="زيادة">+</button>
+  </div><span class="steplab">${label}</span></div>`;
+}
+function ctrlHTML(m){
+  if(m.type==="step")return stepHTML(m.id,"n",m.cmax,m.unit);
+  if(m.type==="benef")return stepHTML(m.id,"n",m.cmax,m.unit)+`<div class="note" id="net_${m.id}"></div>`;
+  if(m.type==="dual")return stepHTML(m.id,"a",m.a.cmax,m.a.l)+stepHTML(m.id,"b",m.b.cmax,m.b.l);
+  if(m.type==="choice")return `<div class="pills">
+    <button class="pill" data-m="${m.id}" data-opt="-1">لا شيء</button>
+    ${m.opts.map((o,i)=>`<button class="pill" data-m="${m.id}" data-opt="${i}">${o.l} <b>+${o.p}</b></button>`).join("")}
+  </div>`;
+  if(m.type==="checks")return `<div class="pills">
+    ${m.opts.map((o,i)=>`<button class="pill" data-m="${m.id}" data-check="${i}">${o.l} <b>+${o.p}</b></button>`).join("")}
+  </div>`;
+  if(m.type==="disp"){let r="";for(let i=0;i<m.n;i++){r+=`<div class="disprow"><span class="displab">موزّع ${i+1}</span><div class="pills">
+    ${m.opts.map((o,k)=>`<button class="pill sm" data-m="${m.id}" data-disp="${i}" data-i="${k}">${o.l}${o.p?` <b>+${o.p}</b>`:""}</button>`).join("")}
+  </div></div>`;}return r;}
+  return "";
+}
+MISSIONS.forEach(m=>{
+  const c=document.createElement("div");c.className="mcard";c.dataset.card=m.id;
+  c.innerHTML=`<div class="mhead"><span class="mnum">${m.num}</span>
+     <div class="mtitle">${m.title}<span class="mreq">${m.req}</span></div>
+     <div class="mscore"><span class="chip" id="c_${m.id}">0</span><span class="cmax">/ ${m.max}</span></div></div>
+     <div class="mrule">${m.rule}</div><div class="mctrl">${ctrlHTML(m)}</div>`;
+  cont.appendChild(c);cardEl[m.id]=c;
+});
+// penalty card (touches)
+const pen=document.createElement("div");pen.className="mcard pen";
+pen.innerHTML=`<div class="mhead"><span class="mnum">−</span>
+   <div class="mtitle">عقوبة اللمس<span class="mreq">كل لمسة للروبوت النشط خارج القاعدة تُزيل بكتيريا نافعة واحدة (−6 نقاط)</span></div>
+   <div class="mscore"><span class="chip" id="c_touch" style="color:var(--warn)">0</span><span class="cmax">لمسات</span></div></div>
+   <div class="mctrl">${stepHTML("touch","n",11,"عدد اللمسات خارج القاعدة")}</div>`;
+cont.appendChild(pen);
+
+// ===== reflect state -> DOM =====
+const teamSel=document.getElementById("teamSel");
+TEAMS.forEach(t=>{const o=document.createElement("option");o.value=t.id;o.textContent=t.name;teamSel.appendChild(o);});
+const tableIn=document.getElementById("tableIn"),judgeIn=document.getElementById("judgeIn");
+const dockTeam=document.getElementById("dockTeam"),dockRound=document.getElementById("dockRound"),
+      dockTotal=document.getElementById("dockTotal"),saveBtn=document.getElementById("saveBoard");
+document.getElementById("dockMax").textContent=MAXTOTAL;
+const roundLabel=r=>r===0?"الجولة التجريبية":"الجولة "+r;
+
+function setInp(card,part,v){const el=card.querySelector(`.sinp[data-part="${part}"]`);if(el)el.value=v;}
+function applyState(){
+  MISSIONS.forEach(m=>{
+    const card=cardEl[m.id],s=st.m[m.id];
+    if(m.type==="step"||m.type==="benef")setInp(card,"n",s.n);
+    else if(m.type==="dual"){setInp(card,"a",s.a);setInp(card,"b",s.b);}
+    else if(m.type==="choice")card.querySelectorAll("[data-opt]").forEach(p=>p.classList.toggle("on",+p.dataset.opt===s.i));
+    else if(m.type==="checks")card.querySelectorAll("[data-check]").forEach(p=>p.classList.toggle("on",!!s.c[+p.dataset.check]));
+    else if(m.type==="disp")card.querySelectorAll("[data-disp]").forEach(p=>p.classList.toggle("on",+p.dataset.i===s.d[+p.dataset.disp]));
+  });
+  pen.querySelector(".sinp").value=st.touches;
+  teamSel.value=st.team;tableIn.value=st.table;judgeIn.value=st.judge;
+  document.querySelectorAll("#roundBtns .rbtn").forEach(b=>b.classList.toggle("on",+b.dataset.r===st.round));
+  recompute();
+}
+function recompute(){
+  let total=0;
+  MISSIONS.forEach(m=>{const p=mpts(m);total+=p;
+    const c=document.getElementById("c_"+m.id);if(c)c.textContent=p;
+    if(m.type==="benef"){const net=Math.max(0,st.m[m.id].n-st.touches);
+      const nn=document.getElementById("net_"+m.id);if(nn)nn.textContent=`المتبقي بعد اللمسات: ${net} × 6 = ${p} نقطة`;}
+  });
+  document.getElementById("c_touch").textContent=st.touches;
+  dockTotal.textContent=total;
+  dockTeam.textContent=teamName(st.team);
+  dockRound.textContent=roundLabel(st.round);
+  saveBtn.disabled=(st.round===0);
+  saveBtn.textContent=st.round===0?"الجولة التجريبية لا تُحفظ":"💾 اعتماد النتيجة وحفظها";
+  return total;
+}
+
+// ===== load a sheet for team+round =====
+function loadSheet(team,round){
+  const k=team+"|"+round;
+  st=sheets[k]?JSON.parse(JSON.stringify(sheets[k])):fresh(team,round);
+  applyState();persist();
+}
+
+// ===== interactions =====
+cont.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;const id=b.dataset.m;if(!id)return;
+  if(b.dataset.d!==undefined){
+    const d=+b.dataset.d;
+    if(id==="touch"){st.touches=clampN(st.touches+d,11);}
+    else{const m=byId[id],part=b.dataset.part;st.m[id][part]=clampN((st.m[id][part]||0)+d,stepMax(m,part));}
+    applyState();persist();return;
+  }
+  if(b.dataset.opt!==undefined){st.m[id].i=+b.dataset.opt;applyState();persist();return;}
+  if(b.dataset.check!==undefined){const i=+b.dataset.check;st.m[id].c[i]=!st.m[id].c[i];applyState();persist();return;}
+  if(b.dataset.disp!==undefined){st.m[id].d[+b.dataset.disp]=+b.dataset.i;applyState();persist();return;}
+});
+cont.addEventListener("input",e=>{
+  const inp=e.target;if(!inp.classList.contains("sinp"))return;
+  const id=inp.dataset.m,part=inp.dataset.part;let v=parseInt(inp.value,10);if(isNaN(v))v=0;
+  if(id==="touch"){v=clampN(v,11);st.touches=v;}
+  else{v=clampN(v,stepMax(byId[id],part));st.m[id][part]=v;}
+  if(String(v)!==inp.value)inp.value=v;
+  recompute();persist();
+});
+
+teamSel.addEventListener("change",()=>loadSheet(teamSel.value,st.round));
+document.getElementById("roundBtns").addEventListener("click",e=>{
+  const b=e.target.closest(".rbtn");if(!b)return;loadSheet(st.team,+b.dataset.r);
+});
+tableIn.addEventListener("input",()=>{st.table=tableIn.value;persist();});
+judgeIn.addEventListener("input",()=>{st.judge=judgeIn.value;persist();});
+
+// reset current sheet
+document.getElementById("resetSheet").addEventListener("click",()=>{
+  if(!confirm("تفريغ استمارة "+teamName(st.team)+" — "+roundLabel(st.round)+"؟"))return;
+  st=fresh(st.team,st.round);applyState();persist();
+});
+
+// ===== save total into the results leaderboard =====
+const toast=document.getElementById("toast");let tTimer=null;
+function showToast(msg,warn){
+  toast.querySelector("span").textContent=msg;toast.classList.toggle("warn",!!warn);toast.classList.add("on");
+  clearTimeout(tTimer);tTimer=setTimeout(()=>toast.classList.remove("on"),3200);
+}
+document.getElementById("saveBoard").addEventListener("click",()=>{
+  if(st.round===0){showToast("الجولة التجريبية لا تُحتسب في لوحة النتائج",true);return;}
+  const total=recompute();
+  let res;try{res=JSON.parse(localStorage.getItem(RESULTS_KEY))}catch(e){}
+  if(!res||!Array.isArray(res.scores)){res={scores:[0,1,2].map(()=>{const o={};TEAMS.forEach(t=>o[t.id]="");return o;})};}
+  for(let r=0;r<3;r++){if(!res.scores[r])res.scores[r]={};TEAMS.forEach(t=>{if(!(t.id in res.scores[r]))res.scores[r][t.id]="";});}
+  res.scores[st.round-1][st.team]=total;
+  try{localStorage.setItem(RESULTS_KEY,JSON.stringify(res));}catch(e){}
+  showToast(`تم اعتماد ${total} نقطة لفريق ${teamName(st.team)} في الجولة ${st.round}`);
+});
+
+// init
+loadSheet(TEAMS[0].id,1);
+</script>
+</body></html>
