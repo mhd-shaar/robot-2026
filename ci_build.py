@@ -158,7 +158,8 @@ td{border:1px solid #d9d3c2;padding:5px 9px;font-size:12.5px;vertical-align:midd
 
 def nav(active):
     it = [("index.html", "الرئيسية"), ("program-general.html", "البرنامج العام"),
-          ("program-detailed.html", "البرنامج التفصيلي"), ("followup.html", "قوائم المتابعة")]
+          ("program-detailed.html", "البرنامج التفصيلي"), ("followup.html", "قوائم المتابعة"),
+          ("results.html", "النتائج"), ("score-sheet.html", "استمارة التحكيم")]
     links = ""
     for h, t in it:
         cls = ' class="on"' if h == active else ""
