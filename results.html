@@ -3,112 +3,238 @@
 <title>النتائج المباشرة - بطولة الروبوت 2026</title><link rel="icon" href="logo.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+@property --ang{syntax:"<angle>";initial-value:0deg;inherits:false}
 :root{
-  --navy:#12315a;--navy2:#1b4a86;--gold:#b8912f;--gold2:#d8b559;
-  --line:#e3dcc7;--paper:#f4f2ea;--ink:#1c2430;--muted:#7a7663;
-  --g1:#c9a227;--s1:#9aa4ad;--b1:#c17c46;
+  --bg:#060f20;--bg2:#0a1c38;--panel:#0c2140;--panel2:#12294e;
+  --line:rgba(125,175,255,.15);--line2:rgba(125,175,255,.28);
+  --gold:#e3b74a;--gold2:#f5d98b;--goldDeep:#b8912f;
+  --cyan:#3fd6ff;--ink:#eaf2ff;--muted:#8fa3c4;
+  --g1:#f0c53d;--s1:#b9c6d4;--b1:#d98d52;
+  --mono:Consolas,"Cascadia Mono","Courier New",monospace;
 }
-body{font-family:"Segoe UI","Tahoma",Arial,sans-serif;background:var(--paper);color:var(--ink)}
+body{font-family:"Segoe UI","Tahoma",Arial,sans-serif;background:var(--bg);color:var(--ink);
+  min-height:100vh;overflow-x:hidden}
+/* ---- arena atmosphere: glow + fading grid ---- */
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(950px 520px at 50% -12%,rgba(63,150,255,.20),transparent 62%),
+  radial-gradient(700px 420px at 88% 112%,rgba(227,183,74,.10),transparent 60%),
+  radial-gradient(600px 380px at 8% 100%,rgba(63,214,255,.06),transparent 60%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+   linear-gradient(rgba(125,175,255,.05) 1px,transparent 1px) 0 0/100% 46px,
+   linear-gradient(90deg,rgba(125,175,255,.05) 1px,transparent 1px) 0 0/46px 100%;
+  -webkit-mask-image:radial-gradient(1100px 750px at 50% 18%,#000 35%,transparent 100%);
+  mask-image:radial-gradient(1100px 750px at 50% 18%,#000 35%,transparent 100%)}
 
-/* ---- top nav (matches site) ---- */
-.nav{background:var(--navy);padding:11px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+canvas#fx{position:fixed;inset:0;z-index:50;pointer-events:none}
+
+/* ---- nav ---- */
+.nav{background:rgba(8,20,42,.85);border-bottom:1px solid var(--line);backdrop-filter:blur(6px);
+  padding:11px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:relative;z-index:5}
 .nav img{height:34px}
-.nav a{color:#dfe6ef;text-decoration:none;font-size:13.5px;font-weight:700;padding:7px 13px;border-radius:7px}
-.nav a:hover{background:#1d4577;color:#fff}
-.nav a.on{background:var(--gold);color:#fff}
+.nav a{color:#c7d5ec;text-decoration:none;font-size:13.5px;font-weight:700;padding:7px 13px;border-radius:7px}
+.nav a:hover{background:rgba(63,150,255,.14);color:#fff}
+.nav a.on{background:var(--goldDeep);color:#fff}
 .nav .sp{flex:1}
 
-.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
 
 /* ---- hero ---- */
-.hero{text-align:center;padding:22px 0 8px}
-.hero img{height:64px}
-.hero .k{font-size:10.5px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-top:9px}
-.hero h1{font-size:26px;color:var(--navy);margin:4px 0}
-.hero .d{font-size:13px;color:#5a6472;font-weight:600}
+.hero{text-align:center;padding:24px 0 4px}
+.hero img{height:60px;filter:drop-shadow(0 0 14px rgba(63,150,255,.45))}
+.mech{font-size:20px;margin-top:10px;letter-spacing:6px}
+.mech .g{display:inline-block;animation:spin 7s linear infinite}
+.mech .g2{animation-direction:reverse}
+.mech .bot{display:inline-block;animation:hover 3s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hero .k{font-family:var(--mono);font-size:11px;letter-spacing:4px;color:var(--gold);font-weight:700;margin-top:8px}
+.hero h1{font-size:30px;font-weight:900;margin:4px 0 2px;
+  background:linear-gradient(180deg,#fff,#bcd2f5);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .d{font-size:13px;color:var(--muted);font-weight:600}
+/* animated circuit trace divider */
+.trace{display:block;width:min(560px,88%);margin:14px auto 0;overflow:visible}
+.trace path{fill:none;stroke:var(--line2);stroke-width:1.6}
+.trace .nd{fill:var(--cyan);opacity:.8}
+.trace .pulse{fill:var(--gold2);filter:drop-shadow(0 0 5px var(--gold))}
 
 /* ---- round tabs ---- */
-.rounds{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:22px 0 6px}
-.rtab{font:800 14px inherit;padding:9px 18px;border:1px solid #ddd6c2;background:#fff;color:#42505f;
-  border-radius:10px;cursor:pointer;transition:.14s;display:flex;align-items:center;gap:7px}
-.rtab:hover{border-color:var(--gold2)}
-.rtab.active{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 3px 10px rgba(18,49,90,.25)}
-.rtab.total{border-style:dashed}
-.rtab.total.active{background:var(--gold);border-color:var(--gold)}
+.rounds{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:22px 0 6px}
+.rtab{font:800 14px "Segoe UI",Tahoma,sans-serif;padding:9px 18px;border:1px solid var(--line2);
+  background:rgba(13,33,64,.7);color:#c7d5ec;border-radius:10px;cursor:pointer;transition:.15s;
+  display:flex;align-items:center;gap:7px}
+.rtab:hover{border-color:var(--gold);color:#fff}
+.rtab.active{background:linear-gradient(135deg,#1c3f77,#12315a);color:#fff;border-color:var(--cyan);
+  box-shadow:0 0 14px rgba(63,214,255,.25),inset 0 0 12px rgba(63,214,255,.08)}
+.rtab.total.active{background:linear-gradient(135deg,var(--goldDeep),#8a6a1e);border-color:var(--gold2);
+  box-shadow:0 0 16px rgba(227,183,74,.35)}
 
 /* ---- toolbar ---- */
 .bar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;justify-content:center;margin:14px 0 4px}
-.btn{font:700 13px inherit;padding:8px 15px;border-radius:9px;border:1px solid #ccd0c2;
-  background:#fff;color:var(--navy);cursor:pointer;transition:.14s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{border-color:var(--gold2);background:#fbf9f2}
-.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
-.btn.primary:hover{background:var(--navy2)}
-.btn.warn:hover{border-color:#c0392b;color:#c0392b}
-.hint{text-align:center;font-size:12px;color:var(--muted);margin:6px auto 0;max-width:640px;line-height:1.6}
+.btn{font:700 13px "Segoe UI",Tahoma,sans-serif;padding:8px 15px;border-radius:9px;border:1px solid var(--line2);
+  background:rgba(13,33,64,.7);color:#dbe6f7;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--gold);color:#fff}
+.btn.primary{background:linear-gradient(135deg,var(--gold),var(--goldDeep));color:#14203a;border-color:var(--gold2);font-weight:800}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.warn:hover{border-color:#ff7b6b;color:#ff9d91}
+.hint{text-align:center;font-size:12px;color:var(--muted);margin:8px auto 0;max-width:640px;line-height:1.7}
 
-/* ---- leaderboard ---- */
-.board{margin:20px auto 0;display:flex;flex-direction:column;gap:11px}
-.row{display:grid;grid-template-columns:64px 1fr 128px;align-items:center;gap:14px;
-  background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.07);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .2s,border-color .2s;
-  position:relative;overflow:hidden}
-.row::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--line)}
+/* ================= LEADERBOARD ================= */
+.board{margin:20px auto 0;display:flex;flex-direction:column;gap:12px}
+.row{display:grid;grid-template-columns:72px 1fr 132px;align-items:center;gap:14px;
+  background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  border-radius:14px;padding:13px 16px;position:relative;overflow:hidden;
+  transition:box-shadow .2s,border-color .2s;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.row::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--line2)}
 .row.r1::before{background:var(--g1)} .row.r2::before{background:var(--s1)} .row.r3::before{background:var(--b1)}
-.row.r1{border-color:#e6cf7a;background:linear-gradient(90deg,#fffdf4,#fff)}
-.row:hover{box-shadow:0 5px 16px rgba(0,0,0,.1)}
+.row:hover{border-color:var(--line2)}
+/* round leader: gold pulse */
+.row.r1{border-color:rgba(240,197,61,.5);animation:leadGlow 2.6s ease-in-out infinite}
+@keyframes leadGlow{0%,100%{box-shadow:0 4px 14px rgba(0,0,0,.35),0 0 12px rgba(240,197,61,.18)}
+  50%{box-shadow:0 4px 14px rgba(0,0,0,.35),0 0 26px rgba(240,197,61,.4)}}
 
-.rank{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
-.rank .medal{font-size:26px;line-height:1}
-.rank .num{font-size:20px;font-weight:900;color:var(--navy)}
-.rank .lbl{font-size:9.5px;color:var(--muted);font-weight:700}
+/* hex rank badge */
+.rank{display:flex;justify-content:center}
+.hex{width:54px;height:60px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  display:grid;place-items:center;background:linear-gradient(160deg,#1d3c6e,#0e2448);
+  border:none;position:relative}
+.hex .in{display:flex;flex-direction:column;align-items:center;line-height:1}
+.hex .medal{font-size:22px}
+.hex .num{font-family:var(--mono);font-size:19px;font-weight:900;color:#dbe6f7}
+.hex .mini{font-family:var(--mono);font-size:10px;font-weight:900;color:#14203a;margin-top:1px}
+.row.r1 .hex{background:linear-gradient(160deg,var(--gold2),var(--g1))}
+.row.r2 .hex{background:linear-gradient(160deg,#e6edf4,var(--s1))}
+.row.r3 .hex{background:linear-gradient(160deg,#eeb083,var(--b1))}
 
 .team{min-width:0}
-.team .nm{font-size:18px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:9px}
-.team .tag{font-size:10.5px;font-weight:700;color:#fff;background:var(--navy2);border-radius:20px;padding:2px 9px}
-.team .meta{font-size:11.5px;color:var(--muted);margin-top:3px}
-/* score bar */
-.track{height:7px;background:#eef1ec;border-radius:6px;margin-top:8px;overflow:hidden}
-.fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:6px;
-  transition:width .5s cubic-bezier(.2,.8,.2,1)}
-.row.r1 .fill{background:linear-gradient(90deg,#e6cf7a,var(--g1))}
+.team .nm{font-size:18px;font-weight:800;color:#fff;display:flex;align-items:center;gap:9px}
+.team .meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px;letter-spacing:1px}
+/* energy bar */
+.track{height:8px;background:rgba(6,15,32,.8);border:1px solid var(--line);border-radius:6px;margin-top:8px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--goldDeep),var(--gold2));border-radius:6px;
+  transition:width .5s cubic-bezier(.2,.8,.2,1);position:relative;box-shadow:0 0 8px rgba(227,183,74,.45)}
+.fill::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,rgba(255,255,255,.28) 0 5px,transparent 5px 11px);
+  animation:flow 1.1s linear infinite}
+@keyframes flow{to{transform:translateX(16px)}}
 
 .pts{text-align:center}
-.pts input{width:100%;font:900 24px "Segoe UI",inherit;text-align:center;color:var(--navy);
-  border:1.5px solid #e0dcc9;border-radius:11px;padding:8px 4px;background:#fbfaf5;outline:none;transition:.14s}
-.pts input:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(184,145,47,.15)}
+.pts input{width:100%;font:900 24px var(--mono);text-align:center;color:var(--gold2);
+  border:1.5px solid var(--line2);border-radius:11px;padding:8px 4px;background:rgba(6,15,32,.75);
+  outline:none;transition:.15s}
+.pts input::placeholder{color:#42598a}
+.pts input:focus{border-color:var(--gold);background:rgba(6,15,32,.95);box-shadow:0 0 0 3px rgba(227,183,74,.2),0 0 14px rgba(227,183,74,.25)}
 .pts input::-webkit-outer-spin-button,.pts input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.pts .unit{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:2px}
+.pts .unit{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:3px}
 
-.foot{text-align:center;font-size:11.5px;color:#8a8676;margin-top:34px;line-height:1.7}
+.foot{text-align:center;font-size:11.5px;color:#5f7398;margin-top:36px;line-height:1.7}
 
-/* ---- flash on rank change ---- */
-@keyframes pop{0%{background:#fff8e0}100%{background:#fff}}
-.row.moved{animation:pop .8s ease}
+/* ================= FINAL SUMMARY ================= */
+.summary{display:none;margin-top:14px}
+.scroll{overflow-x:auto}
 
-/* ================= PRESENTATION / DISPLAY MODE ================= */
-body.show{background:radial-gradient(1200px 700px at 50% -10%,#1c4680,var(--navy))}
-body.show .nav,body.show .hint{display:none}
-body.show .hero h1,body.show .hero .d{color:#fff}
-body.show .hero .k{color:var(--gold2)}
+.champ{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin:56px 0 34px;flex-wrap:wrap}
+.pod{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line2);
+  border-radius:16px;padding:16px 20px;text-align:center;min-width:150px;position:relative;
+  box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pod .m{font-size:34px;line-height:1}
+.pod .pl{font-size:11px;font-weight:800;color:var(--muted);margin-top:3px}
+.pod .pn{font-size:18px;font-weight:900;color:#fff;margin:5px 0 2px}
+.pod .pp{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--gold)}
+.pod.p2{order:1;border-top:4px solid var(--s1)}
+.pod.p3{order:3;border-top:4px solid var(--b1)}
+
+/* ---- THE CHAMPION — signature element ---- */
+.pod.p1{order:2;min-width:210px;padding:34px 30px 24px;border:none;z-index:2;
+  background:linear-gradient(180deg,#16305c,#0d2244);
+  transform:translateY(-18px) scale(1.1);border-radius:20px;
+  animation:halo 2.4s ease-in-out infinite}
+@keyframes halo{
+  0%,100%{box-shadow:0 0 0 6px rgba(240,197,61,.12),0 0 26px 5px rgba(240,197,61,.35),0 14px 34px rgba(0,0,0,.5)}
+  50%{box-shadow:0 0 0 12px rgba(240,197,61,.07),0 0 56px 16px rgba(240,197,61,.6),0 14px 34px rgba(0,0,0,.5)}}
+/* rotating energy ring */
+.pod.p1::before{content:"";position:absolute;inset:-3px;border-radius:23px;z-index:-1;
+  background:conic-gradient(from var(--ang),var(--gold2),var(--goldDeep) 20%,var(--cyan) 45%,var(--goldDeep) 60%,var(--gold2) 80%,var(--goldDeep));
+  animation:ring 3.5s linear infinite}
+@keyframes ring{to{--ang:360deg}}
+/* light sweep */
+.pod.p1::after{content:"";position:absolute;inset:0;border-radius:20px;pointer-events:none;
+  background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.28) 50%,transparent 58%) 0 0/260% 100%;
+  animation:sweep 3.4s ease-in-out infinite}
+@keyframes sweep{0%{background-position:130% 0}60%,100%{background-position:-130% 0}}
+/* floating trophy crown */
+.pod.p1 .crown{position:absolute;top:-34px;inset-inline:0;font-size:38px;
+  animation:crownf 2.6s ease-in-out infinite;
+  filter:drop-shadow(0 6px 14px rgba(240,197,61,.55))}
+@keyframes crownf{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.pod.p1 .m{font-size:54px;margin-top:6px}
+.pod.p1 .pl{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--gold)}
+.pod.p1 .pn{font-size:27px;background:linear-gradient(90deg,var(--gold2),#fff,var(--gold2));
+  background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:sheen 3s linear infinite}
+@keyframes sheen{to{background-position:200% 0}}
+.pod.p1 .pp{font-size:17px;color:var(--gold2)}
+/* sparks */
+.pod.p1 .sp{position:absolute;color:var(--gold2);font-size:13px;animation:tw 1.8s ease-in-out infinite;pointer-events:none}
+.pod.p1 .sp.a{top:8px;right:10px}
+.pod.p1 .sp.b{top:26px;left:12px;animation-delay:.5s;color:var(--cyan)}
+.pod.p1 .sp.c{bottom:14px;right:16px;animation-delay:1s}
+.pod.p1 .sp.d{bottom:30px;left:8px;animation-delay:1.4s;font-size:10px}
+@keyframes tw{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:1;transform:scale(1.25)}}
+
+.seyebrow{font-family:var(--mono);text-align:center;font-size:10.5px;letter-spacing:4px;color:var(--cyan);opacity:.75;margin-bottom:4px}
+.stitle{text-align:center;font-size:15px;font-weight:800;color:#fff;margin:4px 0 14px}
+
+.stable{width:100%;border-collapse:separate;border-spacing:0 8px;min-width:520px;margin:0 auto}
+.stable th{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:800;padding:4px 10px;text-align:center;letter-spacing:1px}
+.stable th.tn{text-align:right}
+.stable td{background:linear-gradient(180deg,var(--panel2),var(--panel));padding:12px 10px;text-align:center;
+  font-family:var(--mono);font-size:15px;font-weight:700;color:#c7d5ec;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stable td:first-child{border-right:1px solid var(--line);border-radius:0 12px 12px 0}
+.stable td:last-child{border-left:1px solid var(--line);border-radius:12px 0 0 12px}
+.stable td.tn{font-family:"Segoe UI",Tahoma,sans-serif;text-align:right;font-size:16px;font-weight:900;color:#fff}
+.stable td.tot{font-size:19px;font-weight:900;color:var(--gold2);background:rgba(227,183,74,.08);text-shadow:0 0 12px rgba(227,183,74,.4)}
+.stable td.rk{font-weight:900;width:64px}
+.stable tr.r1 td{border-color:rgba(240,197,61,.35);background:linear-gradient(180deg,#1a355f,#12294e)}
+.stable tr.r1 td.tot{background:rgba(240,197,61,.14)}
+.stable tr.r1 td:first-child{box-shadow:inset 4px 0 0 var(--g1)}
+.stable tr.r2 td:first-child{box-shadow:inset 4px 0 0 var(--s1)}
+.stable tr.r3 td:first-child{box-shadow:inset 4px 0 0 var(--b1)}
+
+/* ================= PRESENTATION MODE ================= */
+body.show .nav,body.show .hint,body.show .rounds,body.show #fs,body.show #reset,body.show .mech{display:none}
+body.show .bar{margin-top:0}
 body.show .wrap{max-width:1180px}
-body.show .rtab{background:rgba(255,255,255,.08);color:#dfe6ef;border-color:rgba(255,255,255,.18)}
-body.show .rtab.active{background:var(--gold);color:#fff;border-color:var(--gold)}
-body.show .btn{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)}
-body.show .board{gap:14px}
-body.show .row{padding:18px 22px;grid-template-columns:78px 1fr 150px;border-color:transparent;
-  box-shadow:0 6px 22px rgba(0,0,0,.28)}
-body.show .row.r1{background:linear-gradient(90deg,#fffbe9,#fff)}
-body.show .team .nm{font-size:23px} body.show .rank .num{font-size:24px} body.show .rank .medal{font-size:32px}
-/* in show mode: points are read-only-looking, big */
-body.show .pts input{font-size:32px;border-color:transparent;background:transparent;pointer-events:none}
-body.show .foot{color:#c9d2df}
+body.show .btn.primary{background:rgba(13,33,64,.8);color:#dbe6f7;border-color:var(--line2);font-weight:700}
+body.show .board{gap:15px}
+body.show .row{padding:18px 22px;grid-template-columns:82px 1fr 156px}
+body.show .team .nm{font-size:24px} body.show .hex{width:62px;height:68px}
+body.show .hex .medal{font-size:27px} body.show .hex .num{font-size:23px}
+body.show .pts input{font-size:34px;border-color:transparent;background:transparent;pointer-events:none;box-shadow:none}
+body.show .champ{margin-top:76px}
+body.show .pod .pn{font-size:20px} body.show .pod .m{font-size:44px}
+body.show .pod.p1{min-width:250px}
+body.show .pod.p1 .pn{font-size:33px} body.show .pod.p1 .m{font-size:66px}
+body.show .pod.p1 .pp{font-size:21px} body.show .pod.p1 .crown{font-size:46px;top:-42px}
+body.show .stable td{font-size:17px}
+body.show .stable td.tn{font-size:19px} body.show .stable td.tot{font-size:23px}
+body.show .foot{color:#7288ad}
 
 @media(max-width:620px){
-  .row{grid-template-columns:52px 1fr 96px;gap:9px;padding:11px 12px}
+  .row{grid-template-columns:56px 1fr 96px;gap:9px;padding:11px 12px}
+  .hex{width:44px;height:50px} .hex .medal{font-size:18px} .hex .num{font-size:16px}
   .team .nm{font-size:15.5px} .pts input{font-size:19px}
-  .hero h1{font-size:21px}
+  .hero h1{font-size:23px}
+  .pod.p1{transform:translateY(-10px) scale(1.04)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  canvas#fx{display:none}
 }
 </style></head><body>
+
+<canvas id="fx"></canvas>
 
 <div class="nav"><img src="logo.png" alt="">
   <a href="index.html">الرئيسية</a>
@@ -121,12 +247,19 @@ body.show .foot{color:#c9d2df}
 
 <div class="wrap">
   <div class="hero"><img src="logo.png" alt="">
-    <div class="k">ROBOT CHAMPIONSHIP 2026 — LIVE RESULTS</div>
+    <div class="mech"><span class="g">⚙️</span><span class="bot">🤖</span><span class="g g2">⚙️</span></div>
+    <div class="k">ROBOT ARENA — LIVE RESULTS</div>
     <h1>النتائج المباشرة</h1>
     <div class="d">أدخل نقاط كل فريق في الجولة — والترتيب يُحدَّث تلقائياً من الأعلى إلى الأدنى</div>
+    <svg class="trace" viewBox="0 0 600 34" aria-hidden="true">
+      <path id="tp" d="M0 17 H150 l14 -11 h70 l14 11 H300 l14 11 h70 l14 -11 H600"/>
+      <circle class="nd" cx="150" cy="17" r="2.6"/><circle class="nd" cx="300" cy="17" r="2.6"/>
+      <circle class="nd" cx="464" cy="17" r="2.6"/>
+      <circle class="pulse" r="3.4"><animateMotion dur="4.5s" repeatCount="indefinite"
+        path="M0 17 H150 l14 -11 h70 l14 11 H300 l14 11 h70 l14 -11 H600"/></circle>
+    </svg>
   </div>
 
-  <!-- round selector -->
   <div class="rounds" id="rounds">
     <button class="rtab active" data-r="0">🏁 الجولة الأولى</button>
     <button class="rtab" data-r="1">🏁 الجولة الثانية</button>
@@ -137,6 +270,7 @@ body.show .foot{color:#c9d2df}
   <div class="bar">
     <button class="btn primary" id="present">🖥️ وضع العرض</button>
     <button class="btn" id="fs">⛶ ملء الشاشة</button>
+    <button class="btn warn" id="reset">🗑️ تصفير</button>
   </div>
   <div class="hint" id="hint">اكتب نقاط كل فريق في الخانة أمامه — يُرتَّب الجدول تلقائياً من الأعلى إلى الأدنى.
     يمكنك التعديل على أي خانة في أي وقت، وكل شيء يُحفَظ في هذا الجهاز.
@@ -144,9 +278,10 @@ body.show .foot{color:#c9d2df}
 
   <div class="board" id="board"></div>
 
-  <!-- ===== final summary (shown on المجموع الكلي) ===== -->
+  <!-- ===== final summary ===== -->
   <div class="summary" id="summary">
     <div class="champ" id="podium"></div>
+    <div class="seyebrow">TELEMETRY // ALL ROUNDS</div>
     <div class="stitle">📊 ملخّص النقاط في كل الجولات</div>
     <div class="scroll"><table class="stable" id="stable"></table></div>
   </div>
@@ -169,6 +304,7 @@ const ROUNDS = 3;
 const KEY = "rc2026_results_v1";
 const RNAME = ['الأولى','الثانية','الثالثة'];
 const medals = ["🥇","🥈","🥉"];
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let data = load();
 let view = 0;           // 0..2 = round, "T" = total
@@ -180,7 +316,7 @@ function load(){
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}}
 
-function rawVal(id){ // stored round value ("" or number) — total view shows the sum
+function rawVal(id){
   if(view==="T"){let s=0;for(let r=0;r<ROUNDS;r++)s+=(+data.scores[r][id]||0);return s;}
   return data.scores[view][id];
 }
@@ -190,14 +326,15 @@ function numOf(id){
 }
 
 const board=document.getElementById("board");
-const rowEls={};   // stable row elements keyed by team id — built once, never destroyed
+const rowEls={};   // stable rows — built once so inputs never lose focus
 
-// build each row ONCE (inputs are never recreated -> focus is never lost)
 TEAMS.forEach((t,idx)=>{
   const row=document.createElement("div");
   row.className="row";
   row.innerHTML=`
-    <div class="rank"><span class="medal"></span><span class="num"></span><span class="lbl"></span></div>
+    <div class="rank"><div class="hex"><div class="in">
+      <span class="medal"></span><span class="num"></span><span class="mini"></span>
+    </div></div></div>
     <div class="team">
       <div class="nm">${t.name}</div>
       <div class="meta"></div>
@@ -211,32 +348,108 @@ TEAMS.forEach((t,idx)=>{
   board.appendChild(row);
   rowEls[t.id]={row,
     medal:row.querySelector(".medal"), num:row.querySelector(".num"),
-    lbl:row.querySelector(".lbl"), meta:row.querySelector(".meta"),
+    mini:row.querySelector(".mini"), meta:row.querySelector(".meta"),
     fill:row.querySelector(".fill"), input:row.querySelector("input")};
 });
 
-// refresh values, ranks, order — WITHOUT rebuilding the DOM
 function refresh(updateInputs){
   const isTotal=view==="T";
-  // rank: points desc, ties broken by original order (stable)
   const ranked=[...TEAMS].sort((a,b)=>{
     const d=numOf(b.id)-numOf(a.id); return d!==0?d:(+rowEls[a.id].row.dataset.orig - +rowEls[b.id].row.dataset.orig);
   });
   const max=Math.max(1,...TEAMS.map(t=>numOf(t.id)));
   ranked.forEach((t,i)=>{
     const e=rowEls[t.id], num=numOf(t.id);
-    e.row.style.order=i;                                   // reorder via flex (no DOM rebuild)
+    e.row.style.order=i;
     e.row.className="row"+(i<3?" r"+(i+1):"");
-    if(i<3){e.medal.textContent=medals[i];e.medal.style.display="";e.num.textContent=i+1;e.lbl.textContent="";}
-    else   {e.medal.textContent="";e.medal.style.display="none";e.num.textContent=i+1;e.lbl.textContent="المركز";}
-    e.meta.textContent=isTotal?"مجموع الجولات الثلاث":("الجولة "+RNAME[view]);
+    if(i<3){e.medal.textContent=medals[i];e.medal.style.display="";e.num.style.display="none";e.mini.textContent=i+1;}
+    else   {e.medal.textContent="";e.medal.style.display="none";e.num.style.display="";e.num.textContent=i+1;e.mini.textContent="";}
+    e.meta.textContent=(isTotal?"TOTAL // ALL ROUNDS":"ROUND 0"+(view+1))+"  ·  "+(isTotal?"مجموع الجولات":"الجولة "+RNAME[view]);
     e.fill.style.width=Math.round(num/max*100)+"%";
     e.input.readOnly=isTotal;
     if(updateInputs){const v=rawVal(t.id);e.input.value=(v===""||v==null)?"":v;}
   });
 }
 
-// live: update only the edited value + re-rank; inputs are untouched so focus stays put
+// ---- final summary ----
+const summary=document.getElementById("summary");
+const podium=document.getElementById("podium");
+const stable=document.getElementById("stable");
+
+function total(id){let s=0;for(let r=0;r<ROUNDS;r++)s+=(+data.scores[r][id]||0);return s;}
+function rankTeams(){
+  return TEAMS.map((t,i)=>({t,i,tot:total(t.id)}))
+    .sort((a,b)=>b.tot-a.tot || a.i-b.i);
+}
+
+function countUp(el,to){
+  if(reduced||to<=0){el.textContent=to+" نقطة";return;}
+  const t0=performance.now(),D=900;
+  (function step(n){const p=Math.min(1,(n-t0)/D),v=Math.round(to*(1-Math.pow(1-p,3)));
+    el.textContent=v+" نقطة";if(p<1)requestAnimationFrame(step);})(t0);
+}
+
+function renderSummary(){
+  const ranked=rankTeams();
+  const podLabels=["بطل البطولة","الوصيف","الثالث"];
+  podium.innerHTML=ranked.slice(0,3).map((o,i)=>`
+    <div class="pod p${i+1}">
+      ${i===0?'<div class="crown">🏆</div><span class="sp a">✦</span><span class="sp b">✦</span><span class="sp c">✦</span><span class="sp d">✦</span>':''}
+      <div class="m">${medals[i]}</div>
+      <div class="pl">${podLabels[i]}</div>
+      <div class="pn">${o.t.name}</div>
+      <div class="pp">${o.tot} نقطة</div>
+    </div>`).join("");
+  // animated count-up on podium points
+  podium.querySelectorAll(".pp").forEach((el,i)=>countUp(el,ranked[i].tot));
+
+  let html=`<thead><tr><th>المركز</th><th class="tn">الفريق</th>
+    <th>R1</th><th>R2</th><th>R3</th><th>المجموع</th></tr></thead><tbody>`;
+  ranked.forEach((o,i)=>{
+    const cls=i<3?("r"+(i+1)):"";
+    const rk=i<3?medals[i]:(i+1);
+    const cell=r=>{const v=data.scores[r][o.t.id];return (v===""||v==null)?"—":v;};
+    html+=`<tr class="${cls}">
+      <td class="rk">${rk}</td>
+      <td class="tn">${o.t.name}</td>
+      <td>${cell(0)}</td><td>${cell(1)}</td><td>${cell(2)}</td>
+      <td class="tot">${o.tot}</td></tr>`;
+  });
+  html+="</tbody>";
+  stable.innerHTML=html;
+}
+
+// ---- confetti celebration ----
+let fxRun=0;
+function confetti(){
+  if(reduced)return;
+  const ranked=rankTeams(); if(!ranked[0]||ranked[0].tot<=0)return; // nothing to celebrate yet
+  const c=document.getElementById("fx"),x=c.getContext("2d");
+  c.width=innerWidth;c.height=innerHeight;
+  const cols=["#f0c53d","#f5d98b","#3fd6ff","#ffffff","#b8912f"];
+  const P=Array.from({length:150},()=>({x:Math.random()*c.width,y:-30-Math.random()*c.height*.6,
+    s:5+Math.random()*6,v:1.8+Math.random()*2.8,w:Math.random()*2-1,a:Math.random()*Math.PI,
+    r:.04+Math.random()*.08,col:cols[Math.random()*cols.length|0]}));
+  const run=++fxRun; let t=0;
+  (function f(){
+    if(run!==fxRun)return;
+    t++;x.clearRect(0,0,c.width,c.height);
+    let alive=false;
+    P.forEach(p=>{p.y+=p.v;p.x+=Math.sin((t+p.a*60)/22)*p.w;p.a+=p.r;
+      if(p.y<c.height+40)alive=true;
+      x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.col;
+      x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();});
+    if(alive&&t<700)requestAnimationFrame(f);
+    else x.clearRect(0,0,c.width,c.height);
+  })();
+}
+
+function applyView(){
+  if(view==="T"){board.style.display="none";summary.style.display="block";renderSummary();confetti();}
+  else{summary.style.display="none";board.style.display="";refresh(true);}
+}
+
+// live input — only the edited value changes; rows reorder via CSS order (focus never lost)
 board.addEventListener("input",e=>{
   const el=e.target; if(el.tagName!=="INPUT"||view==="T")return;
   let v=el.value; if(v!==""){v=Math.max(0,Math.floor(+v||0));}
@@ -250,21 +463,33 @@ document.getElementById("rounds").addEventListener("click",e=>{
   document.querySelectorAll(".rtab").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
   view=b.dataset.r==="T"?"T":(+b.dataset.r);
-  refresh(true);
+  applyView();
 });
 
-// present mode
+// present mode — in show mode only this button remains
 document.getElementById("present").addEventListener("click",()=>{
   document.body.classList.toggle("show");
-  document.getElementById("present").innerHTML=
-    document.body.classList.contains("show")?"✏️ وضع الإدخال":"🖥️ وضع العرض";
+  const on=document.body.classList.contains("show");
+  document.getElementById("present").innerHTML=on?"✏️ وضع الإدخال":"🖥️ وضع العرض";
+  if(on&&view==="T")confetti();
 });
 // fullscreen
 document.getElementById("fs").addEventListener("click",()=>{
   if(!document.fullscreenElement)document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
   else document.exitFullscreen&&document.exitFullscreen();
 });
+// reset — current round, or EVERYTHING when on the total tab
+document.getElementById("reset").addEventListener("click",()=>{
+  if(view==="T"){
+    if(!confirm("تصفير جميع النتائج في الجولات الثلاث؟ لا يمكن التراجع."))return;
+    for(let r=0;r<ROUNDS;r++)TEAMS.forEach(t=>data.scores[r][t.id]="");
+  }else{
+    if(!confirm("تصفير نقاط الجولة "+RNAME[view]+"؟"))return;
+    TEAMS.forEach(t=>data.scores[view][t.id]="");
+  }
+  save(); applyView();
+});
 
-refresh(true);
+applyView();
 </script>
 </body></html>
