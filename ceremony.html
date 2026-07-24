@@ -530,14 +530,6 @@ slide("البرومو",CONFIG.promo.src
    <h2>البرومو</h2><div class="play"><i></i></div>
    <div class="sub">رحلة أبطالنا في ${esc(E.champ)}</div></div>`,"","data-video='1'");
 
-/* 7 تكريم الكوادر */
-slide("تكريم الكوادر — عنوان",`${LAUREL}<div class="wrap">
- <div class="eyebrow">عرفانًا وتقديرًا</div><h1>تكريم الكوادر</h1></div>`);
-for(const g of CONFIG.cadres){
- slide("تكريم — "+g.group,`<div class="wrap">
-  <div class="eyebrow">تكريم الكوادر</div><h2>${esc(g.group)}</h2><div class="rule"></div>
-  <div class="people">${g.people.map((p,i)=>`<div class="person frag"><b>${esc(p[0])}</b><span>${esc(p[1])}</span></div>`).join("")}</div></div>`);}
-
 /* الفرق */
 slide("تكريم الفرق — عنوان",`${LAUREL}<div class="wrap">
  <div class="eyebrow">أبطال هذا العام</div><h1>تكريم الفرق</h1>
@@ -574,6 +566,14 @@ slide("كلمة الطلاب",`<div class="wrap">
  <h1 style="font-size:clamp(48px,7.5vw,120px)">${dash(st.name)}</h1>
  ${st.team?`<div class="subg">فريق ${esc(st.team)}</div>`:""}
  <div class="rule"></div><div class="sub">${esc(E.champ)}</div></div>`);
+
+/* 7 تكريم الكوادر */
+slide("تكريم الكوادر — عنوان",`${LAUREL}<div class="wrap">
+ <div class="eyebrow">عرفانًا وتقديرًا</div><h1>تكريم الكوادر</h1></div>`);
+for(const g of CONFIG.cadres){
+ slide("تكريم — "+g.group,`<div class="wrap">
+  <div class="eyebrow">تكريم الكوادر</div><h2>${esc(g.group)}</h2><div class="rule"></div>
+  <div class="people">${g.people.map((p,i)=>`<div class="person frag"><b>${esc(p[0])}</b><span>${esc(p[1])}</span></div>`).join("")}</div></div>`);}
 
 /* الصورة والختام */
 slide("الصورة التذكارية",`<div class="wrap">
