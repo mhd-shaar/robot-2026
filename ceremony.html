@@ -56,14 +56,9 @@ h2{font:700 clamp(40px,6.5vw,100px)/1.1 var(--ard)}
 /* دخول الأسماء واحدًا تلو الآخر */
 @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 @keyframes chipin{from{opacity:0;transform:scale(.72)}to{opacity:1;transform:none}}
-.person,.mem,.coach{opacity:0}
-.slide.on .person{animation:rise .55s cubic-bezier(.2,.8,.3,1) both;
-  animation-delay:calc(.35s + var(--i,0)*.09s)}
+.frag{opacity:0;visibility:hidden}
+.frag.shown{visibility:visible;animation:rise .5s cubic-bezier(.2,.8,.3,1) both}
 .slide.on .tchip{animation:chipin .55s cubic-bezier(.2,1.25,.3,1) both .28s}
-.slide.on .mem{animation:rise .5s cubic-bezier(.2,.8,.3,1) both;
-  animation-delay:calc(.55s + var(--i,0)*.14s)}
-.slide.on .coach{animation:rise .5s ease both;
-  animation-delay:calc(.7s + var(--n,4)*.14s)}
 .revealed .wmem{animation:rise .55s ease .5s both}
 
 /* شارات شعارات الفرق */
@@ -541,7 +536,7 @@ slide("تكريم الكوادر — عنوان",`${LAUREL}<div class="wrap">
 for(const g of CONFIG.cadres){
  slide("تكريم — "+g.group,`<div class="wrap">
   <div class="eyebrow">تكريم الكوادر</div><h2>${esc(g.group)}</h2><div class="rule"></div>
-  <div class="people">${g.people.map((p,i)=>`<div class="person" style="--i:${i}"><b>${esc(p[0])}</b><span>${esc(p[1])}</span></div>`).join("")}</div></div>`);}
+  <div class="people">${g.people.map((p,i)=>`<div class="person frag"><b>${esc(p[0])}</b><span>${esc(p[1])}</span></div>`).join("")}</div></div>`);}
 
 /* الفرق */
 slide("تكريم الفرق — عنوان",`${LAUREL}<div class="wrap">
@@ -552,8 +547,8 @@ for(const t of teams){
   <div class="eyebrow">تكريم الفرق</div>
   ${TEAMLOGOS[t.id]?`<img class="tlogo" src="${TEAMLOGOS[t.id]}">`:""}
   <span class="tchip" style="background:${t.color}">${esc(t.name)}</span>
-  <div class="members">${t.members.map((m,i)=>`<span class="mem" style="--i:${i}">${esc(m)}</span>`).join("")}</div>
-  ${t.coach?`<div class="coach" style="--n:${t.members.length}">المدرّب: ${esc(t.coach)}</div>`:""}</div>`,"",
+  <div class="members">${t.members.map((m,i)=>`<span class="mem frag">${esc(m)}</span>`).join("")}</div>
+  ${t.coach?`<div class="coach frag">المدرّب: ${esc(t.coach)}</div>`:""}</div>`,"",
   `style="background:radial-gradient(900px 480px at 50% 115%, ${t.color}44, transparent 68%)"`);}
 
 /* الجوائز */
@@ -596,24 +591,37 @@ document.getElementById("ixl").innerHTML=T.map((t,i)=>`<li onclick="go(${i});tog
 /* ═══ التشغيل ═══ */
 const slides=[...document.querySelectorAll(".slide")];let cur=0;
 const hud=document.getElementById("hud");
+function hudUpd(){
+ const s=slides[cur];let hint="";
+ const left=s.querySelectorAll(".frag:not(.shown)").length;
+ if(s.dataset.reveal&&!s.classList.contains("revealed"))hint=" · <b>Enter: كشف الفائز</b>";
+ else if(s.dataset.video)hint=" · <b>Enter: تشغيل</b>";
+ else if(left)hint=` · <b>⏎ الاسم التالي (بقي ${left})</b>`;
+ hud.innerHTML=`${cur+1} / ${slides.length} · ${T[cur]}${hint}`;
+}
 function go(n){
  cur=Math.max(0,Math.min(slides.length-1,n));
  slides.forEach((s,i)=>s.classList.toggle("on",i===cur));
  location.hash=cur+1;
+ hudUpd();
  const s=slides[cur];
- let hint="";
- if(s.dataset.reveal&&!s.classList.contains("revealed"))hint=" · <b>Enter: كشف الفائز</b>";
- if(s.dataset.video)hint=" · <b>Enter: تشغيل</b>";
- hud.innerHTML=`${cur+1} / ${slides.length} · ${T[cur]}${hint}`;
  if(s.dataset.confetti&&!s.dataset.done){s.dataset.done=1;burst(90)}
 }
-function next(){go(cur+1)} function prev(){go(cur-1)}
+function next(){
+ const f=slides[cur].querySelector(".frag:not(.shown)");
+ if(f){f.classList.add("shown");hudUpd();return}
+ go(cur+1);
+}
+function prev(){
+ const shown=slides[cur].querySelectorAll(".frag.shown");
+ if(shown.length){shown[shown.length-1].classList.remove("shown");hudUpd();return}
+ go(cur-1);
+}
 function activate(){
  const s=slides[cur];
  if(s.dataset.video){const v=s.querySelector("video");if(v){v.paused?v.play():v.pause();return}}
  if(s.dataset.reveal&&!s.classList.contains("revealed")){
-   s.classList.add("revealed");burst(140);
-   hud.innerHTML=`${cur+1} / ${slides.length} · ${T[cur]}`;return}
+   s.classList.add("revealed");burst(140);hudUpd();return}
  next();
 }
 const CFCOLORS=["#D8B559","#FBFAF5",...CONFIG.teams.map(t=>t.color)];
@@ -642,4 +650,5 @@ addEventListener("click",e=>{if(!document.getElementById("index").classList.cont
 const q=new URLSearchParams(location.search);
 go((parseInt(q.get("goto")||location.hash.slice(1))||1)-1);
 if(q.get("reveal"))slides[cur].classList.add("revealed");
+if(q.get("steps")==="all")slides[cur].querySelectorAll(".frag").forEach(f=>f.classList.add("shown"));
 </script></body></html>
